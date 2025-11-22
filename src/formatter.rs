@@ -41,6 +41,7 @@ pub struct EventsFormatter {
     pub(crate) with_span_path: bool,
     pub(crate) show_parent_fields: bool,
     pub(crate) with_location: bool,
+    pub(crate) with_otel_data: bool,
     pub(crate) with_module_path: bool,
     pub(crate) with_timestamp: bool,
     #[cfg(feature = "ansi_logs")]
@@ -56,6 +57,7 @@ impl Default for EventsFormatter {
             with_span_path: true,
             show_parent_fields: true,
             with_location: false,
+            with_otel_data: true,
             with_module_path: false,
             with_timestamp: true,
             #[cfg(feature = "ansi_logs")]
@@ -158,6 +160,27 @@ where
             }
 
             if let Some(span) = span {
+                if self.with_otel_data {
+                    if let Some(otel_data) =
+                        span.extensions().get::<tracing_opentelemetry::OtelData>()
+                    {
+                        if let Some(span_id) = otel_data.span_id() {
+                            serializer.serialize_entry("span.id", &span_id.to_string())?;
+                        }
+                        if let Some(trace_id) = otel_data.trace_id() {
+                            serializer.serialize_entry("trace.id", &trace_id.to_string())?;
+                        }
+                    } else if let Some(builder) =
+                        span.extensions().get::<opentelemetry::trace::SpanBuilder>()
+                    {
+                        if let Some(span_id) = builder.span_id {
+                            serializer.serialize_entry("span_id", &span_id.to_string())?;
+                        }
+                        if let Some(trace_id) = builder.trace_id {
+                            serializer.serialize_entry("trace_id", &trace_id.to_string())?;
+                        }
+                    }
+                }
                 if self.with_span_name {
                     serializer.serialize_entry("span", span.name())?;
                 }
@@ -234,7 +257,7 @@ where
                         write!(writer, "{}", data)?;
                     }
                 }
-            } else if let Some(span) = leaf_span.scope().from_root().last() {
+            } else if let Some(span) = leaf_span.scope().nth(0) {
                 let ext = span.extensions();
                 let data = ext
                     .get::<FormattedFields<N>>()

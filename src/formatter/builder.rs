@@ -53,12 +53,16 @@ impl Builder {
         self.events.with_span_path = enable;
         self
     }
-    pub fn with_current_span(mut self, enable: bool) -> Self {
+    pub fn show_parent_fields(mut self, enable: bool) -> Self {
         self.events.show_parent_fields = enable;
         self
     }
     pub fn with_location(mut self, enable: bool) -> Self {
         self.events.with_location = enable;
+        self
+    }
+    pub fn with_otel_data(mut self, enable: bool) -> Self {
+        self.events.with_otel_data = enable;
         self
     }
     pub fn with_module_path(mut self, enable: bool) -> Self {

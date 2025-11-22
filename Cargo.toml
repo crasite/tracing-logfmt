@@ -12,9 +12,11 @@ readme = "README.md"
 
 [dependencies]
 nu-ansi-term = { version = "0.50", optional = true }
+opentelemetry = "0.31.0"
 time = { version = "0.3.7", features = ["formatting"] }
 tracing = "0.1"
 tracing-core = "0.1"
+tracing-opentelemetry = "0.32.0"
 tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt"] }
 
 [features]
