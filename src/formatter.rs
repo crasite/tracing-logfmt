@@ -39,7 +39,7 @@ pub struct EventsFormatter {
     pub(crate) with_target: bool,
     pub(crate) with_span_name: bool,
     pub(crate) with_span_path: bool,
-    pub(crate) with_current_span: bool,
+    pub(crate) show_parent_fields: bool,
     pub(crate) with_location: bool,
     pub(crate) with_module_path: bool,
     pub(crate) with_timestamp: bool,
@@ -54,7 +54,7 @@ impl Default for EventsFormatter {
             with_target: true,
             with_span_name: true,
             with_span_path: true,
-            with_current_span: true,
+            show_parent_fields: true,
             with_location: false,
             with_module_path: false,
             with_timestamp: true,
@@ -222,7 +222,7 @@ where
 
         // Write all fields from spans
         if let Some(leaf_span) = ctx.lookup_current() {
-            if self.with_current_span {
+            if self.show_parent_fields {
                 for span in leaf_span.scope().from_root() {
                     let ext = span.extensions();
                     let data = ext
@@ -234,7 +234,7 @@ where
                         write!(writer, "{}", data)?;
                     }
                 }
-            } else if let Some(span) = leaf_span.scope().from_root().into_iter().last() {
+            } else if let Some(span) = leaf_span.scope().from_root().last() {
                 let ext = span.extensions();
                 let data = ext
                     .get::<FormattedFields<N>>()

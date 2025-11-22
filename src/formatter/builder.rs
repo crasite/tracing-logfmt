@@ -54,7 +54,7 @@ impl Builder {
         self
     }
     pub fn with_current_span(mut self, enable: bool) -> Self {
-        self.events.with_current_span = enable;
+        self.events.show_parent_fields = enable;
         self
     }
     pub fn with_location(mut self, enable: bool) -> Self {
