@@ -53,6 +53,10 @@ impl Builder {
         self.events.with_span_path = enable;
         self
     }
+    pub fn with_current_span(mut self, enable: bool) -> Self {
+        self.events.with_current_span = enable;
+        self
+    }
     pub fn with_location(mut self, enable: bool) -> Self {
         self.events.with_location = enable;
         self
