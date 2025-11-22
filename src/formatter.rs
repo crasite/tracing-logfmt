@@ -257,8 +257,8 @@ where
                         write!(writer, "{}", data)?;
                     }
                 }
-            } else if let Some(span) = leaf_span.scope().nth(0) {
-                let ext = span.extensions();
+            } else {
+                let ext = leaf_span.extensions();
                 let data = ext
                     .get::<FormattedFields<N>>()
                     .expect("Unable to find FormattedFields in extensions; this is a bug");
